@@ -6,7 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 </head>
 <body>
-
+<div>
+    <p>
+        <a href="{{ url_for('index', sort='title') }}">Sort by Title</a> |
+        <a href="{{ url_for('index', sort='author') }}">Sort by Author</a>
+    </p>
+</div>
 {% for book in books %}
 <div>
     <h3>{{ book.title }}</h3>
