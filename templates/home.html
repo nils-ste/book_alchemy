@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  </head>
-  <body>
+</head>
+<body>
 
-    {% for book in books %}
-    <div> <h3>{{ book.title }}</h3>
-    </div>
+{% for book in books %}
+<div>
+    <h3>{{ book.title }}</h3>
+    <img src="{{ book.cover }}" alt="Book-Cover">
+    {% for author in authors if author.id == book.author_id %}
+    <p>{{ author.name }}</p>
     {% endfor %}
+</div>
+{% endfor %}
 
-  </body>
+</body>
 </html>

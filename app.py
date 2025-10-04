@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from data_models import db, Author, Book
 import datetime
+import requests
 
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -36,14 +37,18 @@ def add_book():
     title = request.form['title']
     isbn = request.form['isbn']
     pub_year = request.form['publication_year']
-    book = Book(isbn=isbn, title=title, author_id=author_id, publication_year=pub_year)
+    isbn_for_url = isbn.replace('-', '')
+    cover_url = f"https://covers.openlibrary.org/b/isbn/{isbn_for_url}-M.jpg"
+    book = Book(isbn=isbn, title=title, author_id=author_id, publication_year=pub_year, cover=cover_url)
     db.session.add(book)
     db.session.commit()
     return redirect(url_for('add_book'))
 
 @app.route('/', methods=['GET'])
 def index():
-  return render_template('home.html')
+  books = db.session.query(Book).all()
+  authors = db.session.query(Author).all()
+  return render_template('home.html', books=books, authors=authors)
 
 
 

@@ -16,4 +16,5 @@ class Book(db.Model):
     title = db.Column(db.String)
     publication_year = db.Column(db.Integer)
     author_id = db.Column(db.Integer, db.ForeignKey('authors.id'))
+    cover = db.Column(db.String)
 
