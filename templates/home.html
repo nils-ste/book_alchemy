@@ -4,23 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+        .book-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .book-header h3, .book-header form {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
 <div>
-    <p>
-        <a href="{{ url_for('index', sort='title') }}">Sort by Title</a> |
-        <a href="{{ url_for('index', sort='author') }}">Sort by Author</a>
-    </p>
+    <form action="{{ url_for('index') }}" method="get" style="margin-bottom:1rem;">
+        <input type="text" name="search" placeholder="Search..." value="{{ request.args.get('search','') }}">
+        <input type="hidden" name="sort" value="{{ request.args.get('sort','') }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <form action="{{ url_for('index') }}" method="get" style="margin-bottom:1rem;">
+        <input type="hidden" name="search" value="{{ request.args.get('search','') }}">
+        <button type="submit" name="sort" value="title">Sort by Title</button>
+        <button type="submit" name="sort" value="author">Sort by Author</button>
+        <button type="submit">Default</button>
+    </form>
 </div>
+{% if books %}
 {% for book in books %}
 <div>
-    <h3>{{ book.title }}</h3>
+    <div class="book-header">
+        <h3>{{ book.title }}</h3>
+        <form action="{{ url_for('delete_book', book_id=book.id) }}" method="post">
+            <button type="submit" name="delete">Delete</button>
+        </form>
+    </div>
     <img src="{{ book.cover }}" alt="Book-Cover">
     {% for author in authors if author.id == book.author_id %}
     <p>{{ author.name }}</p>
     {% endfor %}
 </div>
 {% endfor %}
-
+{% else %}
+<h3>No books matching the search criteria</h3>
+{% endif %}
 </body>
 </html>

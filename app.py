@@ -49,19 +49,30 @@ def add_book():
 @app.route('/', methods=['GET'])
 def index():
     sort = request.args.get('sort')
+    search = (request.args.get('search') or '').strip()
 
+    q = db.session.query(Book)
+
+    if search:
+        q = q.filter(Book.title.like(f'%{search}%'))
+
+    # sort (no func)
     if sort == 'title':
-        books = db.session.query(Book).order_by(Book.title).all()
+        q = q.order_by(Book.title)
     elif sort == 'author':
-        books = (db.session.query(Book)
-                 .join(Author, Book.author_id == Author.id)
-                 .order_by(Author.name)
-                 .all())
-    else:
-        books = db.session.query(Book).all()
+        q = q.join(Author).order_by(Author.name, Book.title)
 
+    books = q.all()
     authors = db.session.query(Author).all()
     return render_template('home.html', books=books, authors=authors)
+
+
+@app.route('/book/<int:book_id>/delete', methods=['POST'])
+def delete_book(book_id):
+    book = db.session.query(Book).get(book_id)
+    db.session.delete(book)
+    db.session.commit()
+    return redirect(url_for('index'))
 
 
 """with app.app_context():
